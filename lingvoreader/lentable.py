@@ -3,7 +3,7 @@
 from __future__ import (print_function)
 import tools
 
-__author__ = 'svolkov'
+__author__ = 'sv99'
 
 
 class SymInfo():

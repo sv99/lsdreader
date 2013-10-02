@@ -5,7 +5,7 @@ from lingvoreader import lsdreader
 import sys
 from StringIO import StringIO
 
-__author__ = 'svolkov'
+__author__ = 'sv99'
 
 
 class ArgumentParserError(Exception):

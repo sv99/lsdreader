@@ -3,7 +3,7 @@
 from unittest import TestCase
 from lingvoreader import tools
 
-__author__ = 'svolkov'
+__author__ = 'sv99'
 
 
 class TestTools(TestCase):

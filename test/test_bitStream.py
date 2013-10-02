@@ -3,7 +3,7 @@
 from unittest import TestCase
 from lingvoreader import bitstream
 
-__author__ = 'svolkov'
+__author__ = 'sv99'
 
 
 class TestBitStream(TestCase):

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import struct
 
-__author__ = 'svolkov'
+__author__ = 'sv99'
 
 
 def reverse32(int_value):

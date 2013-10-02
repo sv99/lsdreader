@@ -4,7 +4,7 @@ from __future__ import (division, absolute_import, print_function)
 from lingvoreader import tools
 from lingvoreader.lentable import LenTable
 
-__author__ = 'svolkov'
+__author__ = 'sv99'
 
 
 class Decoder():

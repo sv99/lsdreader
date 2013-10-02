@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import (print_function)
 
-__author__ = 'svolkov'
+__author__ = 'sv99'
 
 
 lang_map = {

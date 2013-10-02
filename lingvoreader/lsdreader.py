@@ -9,7 +9,7 @@ from lingvoreader import decoder, tools
 
 from lingvoreader.bitstream import BitStream, reverse16, reverse32
 
-__author__ = 'svolkov'
+__author__ = 'sv99'
 VERSION = '0.1'
 #
 # lsd decoder - based on source from tr7 user from ru-board
