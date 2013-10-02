@@ -6,7 +6,11 @@ python analog ABBYY DSL Compiler x5 - decomile LSD dictionary to DSL.
 Based on C++ source decoder.zip from ru-board user [tr7](http://forum.ru-board.com/profile.cgi?action=show&member=tr7)
 
 ## Install
-    easy_install lingvoreader-0.1-py2.7.egg
+    easy_install lingvoreader-0.1.4-py2.7.egg
+
+or
+
+    pip install lingvoreader
 
 ## Usage
     usage: lsdreader [-h] (-i INPUT | -a) [-o OUTDIR] [-c] [-v] [--version]
