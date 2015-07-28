@@ -31,7 +31,7 @@ Usage
 
   lsdreader [-h] (-i INPUT | -a) [-o OUTDIR] [-c] [-v] [--version]
 
-  Decode Lingvo lsd dictionary to dsl
+  Decode Lingvo X5 lsd dictionary to dsl
 
   optional arguments:
 

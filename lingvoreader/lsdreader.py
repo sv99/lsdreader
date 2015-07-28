@@ -192,7 +192,7 @@ class LsdFile():
             self.decoder = decoder.AbbreviationDictionaryDecoder(self.bstr)
         else:
             self.header.dump(True)
-            raise LsdError("Not supported dict %s" % hex(self.header.type))
+            raise LsdError("Not supported dict version %s" % hex(self.header.version))
 
         self.overlay = None
         self.headings = []

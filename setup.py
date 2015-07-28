@@ -8,7 +8,7 @@ with open('README.txt') as file:
 
 setup(
     name="lingvoreader",
-    version="0.1.4",
+    version="0.1.5",
     author=__author__,
     author_email='sv99@inbox.ru',
     url='https://github.com/sv99/lsdreader',
