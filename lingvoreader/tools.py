@@ -14,7 +14,7 @@ lang_map = {
     1052: u"Albanian",
     1545: u"Altaic",
     1025: u"Arabic",                # x5 tested support
-    #1025: u"ArabicSaudiArabia",
+    # 1025: u"ArabicSaudiArabia",
     5121: u"ArabicAlgeria",
     15361: u"ArabicBahrain",
     3073: u"ArabicEgypt",
@@ -31,7 +31,7 @@ lang_map = {
     14337: u"ArabicUAE",
     9217: u"ArabicYemen",
     1067: u"Armenian",              # x5 tested support
-    #1067: u"ArmenianEastern",
+    # 1067: u"ArmenianEastern",
     33835: u"ArmenianGrabar",
     32811: u"ArmenianWestern",
     1101: u"Assamese",
@@ -54,7 +54,7 @@ lang_map = {
     1566: u"Chamorro",
     1544: u"Chechen",
     1028: u"Chinese",               # x5 tested support
-    #1028: u"ChineseTaiwan",
+    # 1028: u"ChineseTaiwan",
     3076: u"ChineseHongKong",
     5124: u"ChineseMacau",
     2052: u"ChinesePRC",
@@ -200,7 +200,7 @@ lang_map = {
     1619: u"Nivkh",
     1620: u"Nogay",
     1044: u"Norwegian",
-    #1044: u"NorwegianBokmal",
+    # 1044: u"NorwegianBokmal",
     2068: u"NorwegianNynorsk",
     1621: u"Nyanja",
     1622: u"Occidental",
@@ -217,7 +217,7 @@ lang_map = {
     1654: u"Pinyin",
     1045: u"Polish",
     1046: u"Portuguese",            # not supported
-    #1046: u"PortugueseBrazilian",
+    # 1046: u"PortugueseBrazilian",
     2070: u"PortugueseStandard",    # x5 supported
     1541: u"Provencal",
     1094: u"Punjabi",
@@ -245,7 +245,7 @@ lang_map = {
     1633: u"Somali",
     1070: u"Sorbian",                   # not supported
     1634: u"Sotho",
-    #1034: u"Spanish",                  # not supported
+    # 1034: u"Spanish",                  # not supported
     1034: u"SpanishTraditionalSort",    # x5 tested
     11274: u"SpanishArgentina",
     16394: u"SpanishBolivia",
@@ -290,7 +290,7 @@ lang_map = {
     1643: u"Turkmen",
     1644: u"Tuvin",
     1645: u"Udmurt",
-    #1646: u"Uighur",           # not supported
+    # 1646: u"Uighur",           # not supported
     1646: u"UighurCyrillic",    # not supported
     1647: u"UighurLatin",
     1058: u"Ukrainian",
@@ -326,3 +326,23 @@ def bit_length(num):
         res += 1
         num >>= 1
     return res
+
+
+def display_time(sec):
+    result = ""
+    hour = sec // 3600
+    if hour:
+        result += "{} hours".format(hour)
+        if hour == 1:
+            result = result.rstrip('s')
+    sec -= 3600 * hour
+    min = sec // 60
+    if min:
+        if result != "":
+            result += " "
+        result += "{} min".format(int(min))
+    sec -= 60 * min
+    if result != "":
+        result += " "
+    result += "{0:0.2f} sec".format(sec)
+    return result
