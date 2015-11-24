@@ -3,7 +3,7 @@ lsdreader
 
 python analog ABBYY DSL Compiler - decompile LSD dictionary to DSL.
 
-Support Linvo 11, 12, X3, X5 and X6 lsd files format.
+Support Lingvo 11, 12, X3, X5 and X6 lsd files format.
 
 Based on C++ source decoder.zip from ru-board user `tr7 <http://forum.ru-board.com/profile.cgi?action=show&member=tr7>`_
 `Source on github <https://github.com/nongeneric/lsd2dsl>`_
@@ -34,7 +34,7 @@ Usage
 
     lsdreader [-h] [--header] (-i INPUT | -a) [-o OUTDIR] [-c] [-v] [--version]
     
-    Decode Linvo 11, 12, X3, X5 and X6 lsd dictionary to dsl
+    Decode Lingvo 11, 12, X3, X5 and X6 lsd dictionary to dsl
     
     optional arguments:
       -h, --help            show this help message and exit
