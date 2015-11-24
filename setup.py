@@ -24,8 +24,6 @@ def find_version(*file_paths):
         return version_match.group(1)
     raise RuntimeError("Unable to find version string.")
 
-long_description = read('README.rst')
-
 
 setup(
     name="lingvoreader",
@@ -33,8 +31,8 @@ setup(
     author='sv99',
     author_email='sv99@inbox.ru',
     url='https://github.com/sv99/lsdreader',
-    description='Lingvo X3,X5 lsd reader Utilities',
-    long_description=long_description,
+    description='Linvo 11, 12, X3, X5 and X6 lsd reader Utilities',
+    long_description=read('README.rst'),
     packages=find_packages(),
     platforms='any',
     zip_safe=True,

@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import (division, absolute_import, print_function)
 from lingvoreader import tools
-from lingvoreader.bitstream import XoredBitStream
 from lingvoreader.lentable import LenTable
 
 __author__ = 'sv99'
@@ -79,15 +78,15 @@ class Decoder:
                 res += unichr(sym)
         return res
 
+    # need seek(bstr.header.dictionary_encoder_offset) befor call!
     def read(self):
-        # mast be set to dictionary_encoder_offset!!
         return
 
     def dump(self):
         print("Decoder:               %s" % self.__class__.__name__)
         if self.readed:
-            print("\tArticleSymbols:    %d" % len(self._article_symbols))
-            print("\tHeadingSymbols:    %d" % len(self._heading_symbols))
+            print("    ArticleSymbols:    %d" % len(self._article_symbols))
+            print("    HeadingSymbols:    %d" % len(self._heading_symbols))
             self._ltArticles.dump("Articles")
             self._ltHeadings.dump("Headings")
             self._ltPrefixLengths.dump("PrefixLengths")
@@ -115,56 +114,6 @@ class UserDictionaryDecoder(Decoder):
         return
 
 
-class SystemDictionaryDecoder(Decoder):
-    def __init__(self, bstr):
-        Decoder.__init__(self, bstr)
-        return
-
-    def read(self):
-        prefix_len = self.bstr.read_int()
-        self.prefix = self.bstr.read_unicode(prefix_len)
-        self._article_symbols = self.bstr.read_symbols()
-        self._heading_symbols = self.bstr.read_symbols()
-        self._ltArticles = LenTable(self.bstr)
-        self._ltHeadings = LenTable(self.bstr)
-
-        self._ltPostfixLengths = LenTable(self.bstr)
-        self._dummy = self.bstr.read_bits(32)
-        self._ltPrefixLengths = LenTable(self.bstr)
-
-        self._huffman1Number = self.bstr.read_bits(32)
-        self._huffman2Number = self.bstr.read_bits(32)
-        self._readed = True
-        return
-
-    # def decode_heading(self, size):
-    #     res = ""
-    #     for i in range(size):
-    #         sym_idx = self._ltHeadings.decode()
-    #         sym = self._heading_symbols[sym_idx]
-    #         assert(sym <= 0xffff)  # LingvoEngine:2EAB84E8
-    #         res += unichr(sym)
-    #     return res
-
-    def decode_article(self, size):
-        res = ""
-        while len(res) < size:
-            sym_idx = self._ltArticles.decode()
-            sym = self._article_symbols[sym_idx]
-            if sym <= 0x80:
-                if sym <= 0x3F:
-                    start_pref_idx = self.bstr.read_bits(tools.bit_length(len(self.prefix)))
-                    s = sym + 3
-                    res += self.prefix[start_pref_idx:start_pref_idx + s]
-                else:
-                    start_idx = self.bstr.read_bits(tools.bit_length(size))
-                    s = sym - 0x3d
-                    res += res[start_idx:start_idx + s]
-            else:
-                res += unichr(sym - 0x80)
-        return res
-
-
 class SystemDictionaryDecoder13(Decoder):
     def __init__(self, bstr):
         Decoder.__init__(self, bstr)
@@ -185,15 +134,6 @@ class SystemDictionaryDecoder13(Decoder):
         self._readed = True
         return
 
-    # def decode_heading(self, size):
-    #     res = ""
-    #     for i in range(size):
-    #         sym_idx = self._ltHeadings.decode()
-    #         sym = self._heading_symbols[sym_idx]
-    #         assert(sym <= 0xffff)
-    #         res += unichr(sym)
-    #     return res
-
     def decode_article(self, size):
         res = ""
         while len(res) < size:
@@ -211,6 +151,47 @@ class SystemDictionaryDecoder13(Decoder):
             else:
                 res += unichr(sym - 0x80)
         return res
+
+
+class SystemDictionaryDecoder14(SystemDictionaryDecoder13):
+    def __init__(self, bstr):
+        SystemDictionaryDecoder13.__init__(self, bstr)
+        return
+
+    def read(self):
+        prefix_len = self.bstr.read_int()
+        self.prefix = self.bstr.read_unicode(prefix_len)
+        self._article_symbols = self.bstr.read_symbols()
+        self._heading_symbols = self.bstr.read_symbols()
+        self._ltArticles = LenTable(self.bstr)
+        self._ltHeadings = LenTable(self.bstr)
+
+        self._ltPostfixLengths = LenTable(self.bstr)
+        self._dummy = self.bstr.read_bits(32)
+        self._ltPrefixLengths = LenTable(self.bstr)
+
+        self._huffman1Number = self.bstr.read_bits(32)
+        self._huffman2Number = self.bstr.read_bits(32)
+        self._readed = True
+        return
+
+    # def decode_article(self, size):
+    #     res = ""
+    #     while len(res) < size:
+    #         sym_idx = self._ltArticles.decode()
+    #         sym = self._article_symbols[sym_idx]
+    #         if sym <= 0x80:
+    #             if sym <= 0x3F:
+    #                 start_pref_idx = self.bstr.read_bits(tools.bit_length(len(self.prefix)))
+    #                 s = sym + 3
+    #                 res += self.prefix[start_pref_idx:start_pref_idx + s]
+    #             else:
+    #                 start_idx = self.bstr.read_bits(tools.bit_length(size))
+    #                 s = sym - 0x3d
+    #                 res += res[start_idx:start_idx + s]
+    #         else:
+    #             res += unichr(sym - 0x80)
+    #     return res
 
 
 class AbbreviationDictionaryDecoder(Decoder):
@@ -247,16 +228,6 @@ class AbbreviationDictionaryDecoder(Decoder):
             res += unichr(self.bstr.read_bits(16) ^ 0x879A)
         return res
 
-    # def decode_heading(self, size):
-    #     res = ""
-    #     for i in range(size):
-    #         sym_idx = self._ltHeadings.decode()
-    #         sym = self._heading_symbols[sym_idx]
-    #         assert(sym <= 0xffff)  # LingvoEngine:2EAB84E8
-    #         res += unichr(sym)
-    #     return res
-
-
 class SystemDictionaryDecoder15(Decoder):
     def __init__(self, bstr):
         Decoder.__init__(self, bstr)
@@ -281,15 +252,6 @@ class SystemDictionaryDecoder15(Decoder):
         self._huffman2Number = self.bstr.read_bits(32)
         self._readed = True
         return
-
-    # def decode_heading(self, size):
-    #     res = ""
-    #     for i in range(size):
-    #         sym_idx = self._ltHeadings.decode()
-    #         sym = self._heading_symbols[sym_idx]
-    #         assert(sym <= 0xffff)  # LingvoEngine:2EAB84E8
-    #         res += unichr(sym)
-    #     return res
 
     def decode_article(self, size):
         res = ""

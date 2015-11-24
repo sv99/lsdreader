@@ -6,7 +6,8 @@ import os
 
 from lingvoreader import LsdError
 from lingvoreader import tools, decoder
-from lingvoreader.bitstream import reverse32, reverse16, BitStream, XoredBitStream
+from lingvoreader.articleheading import ArticleHeading, ArticleHeadingList
+from lingvoreader.bitstream import reverse32, reverse16, BitStream
 
 __author__ = 'sv99'
 
@@ -22,13 +23,13 @@ class OverlayReader:
 
     def dump(self):
         print("Overlay:")
-        print("\tEntriesCount:      %s" % self._entriesCount)
+        print("    EntriesCount:      %s" % self._entriesCount)
 
 
 class Header:
     def __init__(self, bstr):
         self.bstr = bstr
-        self.magic = self.bstr.read(8).replace('\x00', '')
+        self.magic = self.bstr.read(8).decode().replace('\x00', '')
         self.version = reverse32(self.bstr.read_int())
         self.unk = reverse32(self.bstr.read_int())
         self.checksum = reverse32(self.bstr.read_int())
@@ -50,16 +51,16 @@ class Header:
 
     def dump(self):
         print("Header:")
-        print("\tMagic:             %s" % self.magic)
-        print("\tChecksume:         %s" % hex(self.checksum))
-        print("\tVersion:           %s (%s)" % (hex(self.hi_version), hex(self.version)))
-        print("\tEntries:           %d" % self.entries_count)
-        print("\tAnnotationOffset:  %s" % hex(self.annotation_offset))
-        print("\tDictionaryEncoderOffset: %s" % hex(self.dictionary_encoder_offset))
-        print("\tArticlesOffset:    %s" % hex(self.articles_offset))
-        print("\tPages start:       %s" % hex(self.pages_offset))
-        print("\tSource language:   %d %s" % (self.source_language, tools.lang_map[self.source_language]))
-        print("\tTarget language:   %d %s" % (self.target_language, tools.lang_map[self.target_language]))
+        print("    Magic:             %s" % self.magic)
+        print("    Checksume:         %s" % hex(self.checksum))
+        print("    Version:           %s (%s)" % (hex(self.hi_version), hex(self.version)))
+        print("    Entries:           %d" % self.entries_count)
+        print("    AnnotationOffset:  %s" % hex(self.annotation_offset))
+        print("    DictionaryEncoderOffset: %s" % hex(self.dictionary_encoder_offset))
+        print("    ArticlesOffset:    %s" % hex(self.articles_offset))
+        print("    Pages start:       %s" % hex(self.pages_offset))
+        print("    Source language:   %d %s" % (self.source_language, tools.lang_map[self.source_language]))
+        print("    Target language:   %d %s" % (self.target_language, tools.lang_map[self.target_language]))
 
 
 class CachePage:
@@ -73,62 +74,6 @@ class CachePage:
         self.headings_count = bstr.read_bits(16)
         self.bstr.to_nearest_byte()
         return
-
-
-class ArticleHeading:
-    def __init__(self, lsd_decoder, bstr, known_prefix, version):
-        self.text = ""
-        self.extensions = []
-        prefix_len = lsd_decoder.decode_prefix_len()
-        postfix_len = lsd_decoder.decode_postfix_len()
-        self.text = lsd_decoder.decode_heading(postfix_len)
-        self.reference = lsd_decoder.read_reference2()
-        self.text = known_prefix[:prefix_len] + self.text
-        if version < 19:
-            return
-        if bstr.read_bit():
-            # additional not visible formatting item in header
-            # join multisymbols item
-            ext_length = bstr.read_bits(8)
-            if ext_length == 0:
-                return
-            ext = ""
-            first_idx = prev_idx = 0
-            for i in range(ext_length):
-                idx = bstr.read_bits(8)
-                char = unichr(bstr.read_bits(16))
-                if ext == "":
-                    ext += char
-                    first_idx = prev_idx = idx
-                else:
-                    if prev_idx + 1 == idx:
-                        # join item with sequence idx
-                        ext += char
-                        prev_idx = idx
-                    else:
-                        # other item
-                        self.extensions.append((first_idx, ext))
-                        ext = char
-                        first_idx = prev_idx = idx
-            # add last item
-            self.extensions.append((first_idx, ext))
-        return
-
-    @property
-    def ext_text(self):
-        if len(self.extensions) == 0:
-            return self.text
-        res = self.text
-        offset = 0
-        for idx, ext in self.extensions:
-            add_braces = ext != u"\\"
-            if add_braces:
-                ext = u"{" + ext + u"}"
-
-            res = res[:idx + offset] + ext + res[idx + offset:]
-            if add_braces:
-                offset += 2
-        return res
 
 
 xor_pad = (
@@ -174,23 +119,23 @@ class LsdFile:
         self._parsed = False
         self.verbose = verbose
         with open(dict_file, 'rb') as fp:
-            self.bstr = BitStream(fp.read())
+            self.bstr = BitStream(bytearray(fp.read()))
 
         self.overlay = None
-        self.headings = []
+        self.headings = ArticleHeadingList()
         self.dict = []
         self.header = Header(self.bstr)
         # check magic
-        if self.header.magic != 'LingVo':
+        if self.header.magic != u'LingVo':
             raise LsdError('Allow only Lsd "LingVo" ident: %s' % repr(self.header.magic))
 
         # initialize decoder
         self.decoder = None
         hi_version = self.header.hi_version
         version = self.header.version
-        if hi_version == 0x11:  # lingvo 11 dictionary: 0x11001 and 0x112001 if pages count > 1000
+        if hi_version == 0x11:  # lingvo 11 dictionary: 0x11001
             self.decoder = decoder.UserDictionaryDecoder(self.bstr)
-        elif hi_version == 0x12:  # lingvo 12 dictionary: 0x12001 and 0x132001 if pages count > 1000
+        elif hi_version == 0x12:  # lingvo 12 dictionary: 0x12001
             self.decoder = decoder.UserDictionaryDecoder(self.bstr)
         elif hi_version == 0x13:  # x3 dictionary: 0x131001 and 0x132001 if pages count > 1000
             self.decoder = decoder.SystemDictionaryDecoder13(self.bstr)
@@ -198,15 +143,16 @@ class LsdFile:
             if version == 0x142001:  # user dictionaries
                 self.decoder = decoder.UserDictionaryDecoder(self.bstr)
             elif version == 0x141004:  # system dictionaries
-                self.decoder = decoder.SystemDictionaryDecoder(self.bstr)
+                self.decoder = decoder.SystemDictionaryDecoder14(self.bstr)
             elif version == 0x145001:  # abbreviation dictionaries
                 self.decoder = decoder.AbbreviationDictionaryDecoder(self.bstr)
         elif hi_version == 0x15:  # x6 dictionary
-            self.decode_x6()
             if version == 0x152001:  # user dictionaries
                 self.decoder = decoder.UserDictionaryDecoder(self.bstr)
             elif version == 0x151005:  # system dictionaries
-                self.decoder = decoder.SystemDictionaryDecoder15(self.bstr)
+                # xor dictionary
+                self.xor_block_x6(self.header.dictionary_encoder_offset, self.header.articles_offset)
+                self.decoder = decoder.SystemDictionaryDecoder14(self.bstr)
             elif version == 0x155001:  # abbreviation dictionaries
                 self.decoder = decoder.AbbreviationDictionaryDecoder(self.bstr)
 
@@ -216,7 +162,6 @@ class LsdFile:
             exit(1)
             # raise LsdError("Not supported dict version %s" % hex(self.header.version))
 
-        # in the x6 need replace stream reader!!
         name_len = self.bstr.read_some(1)
         self.name = self.bstr.read_unicode(name_len, False)
         self.first_heading = self.bstr.read_unicode(self.bstr.read_byte(), False)
@@ -230,16 +175,19 @@ class LsdFile:
         else:
             self.icon_size = 0
             self.icon = None
+
         if self.header.version > 0x140000:
             self.header_checksum = reverse32(self.bstr.read_int())
         else:
             self.header_checksum = 0
+
         if self.header.version > 0x120000:
             self.pages_end = reverse32(self.bstr.read_int())
             self.overlay_data = reverse32(self.bstr.read_int())
         else:
             self.pages_end = self.bstr.length
             self.overlay_data = self.bstr.length  # no overlay
+
         if self.header.version > 0x140000:
             self.dummy1 = reverse32(self.bstr.read_int())
             self.dummy2 = reverse32(self.bstr.read_int())
@@ -250,38 +198,21 @@ class LsdFile:
         # set bstr pos for decoding
         self.bstr.seek(self.header.dictionary_encoder_offset)
 
-    def decode_x6(self):
-        key = 0x7f
-        res = bytearray(self.bstr.record)
-        for i in range(self.header.dictionary_encoder_offset, self.header.articles_offset):
-            # byte = resord(self.bstr.record[i])
-            # res += chr(byte ^ key)
-            # key = xor_pad[byte]
-            byte = res[i]
-            res[i] = byte ^ key
+    # x6 system dictionary table based xor decoding
+    # each block xored with start key=0x7f
+    # 1. dictionary_encoder_offset -> article_offset
+    #    must by decoded befor decoder.read()
+    # 2. annotation_offset -> dictionary_encoder_offset
+    #    annotation decoded in the read_annotation
+    # 3. each article encoded individully
+    #    articles_offset + heading.reference -> articles_offset + heading.next-reference
+    #    article decoded in the
+    def xor_block_x6(self, start, end, key=0x7f):
+        for i in range(start, end):
+            byte = self.bstr.record[i]
+            self.bstr.record[i] = byte ^ key
             key = xor_pad[byte]
-        self.bstr.record = res
-        #self.bstr.record[:self.bstr.pos] + res + \
-        #                   self.bstr.record[self.header.articles_offset]
-
-    def dump(self):
-        self.header.dump()
-        # dump header for not supported versions
-        if not self.decoder is None:
-            print("Name:                  %s" % self.name)
-            print("First heading:         %s" % self.first_heading)
-            print("Last heading:          %s" % self.last_heading)
-            print("Capitals:              %s" % self.capitals)
-            print("Pages end:             %s" % hex(self.pages_end))
-            print("Overlay data:          %s" % hex(self.overlay_data))
-            print("Pages count:           %d" % ((self.pages_end - self.header.pages_offset) // 512))
-            if self.header.version > 0x140000:
-                print("dummy1:                %s" % hex(self.dummy1))
-                print("dummy2:                %s" % hex(self.dummy2))
-            print("Icon enable:           %s" % (self.icon_size > 0))
-            if self.readed:
-                self.decoder.dump()
-                self.overlay.dump()
+        return key
 
     @property
     def pages_count(self):
@@ -290,33 +221,64 @@ class LsdFile:
     def get_page_offset(self, page_number):
         return self.header.pages_offset + 512 * page_number
 
-    def collect_headings(self):
-        res = []
+    def read_headings(self):
         for i in range(self.pages_count):
-            headings = self.collect_heading_from_page(i)
-            res += headings
+            self.read_heading_from_page(i)
+        # set last next_reference
+        self.headings[-1].next_reference = self.header.pages_offset - self.header.articles_offset
+
+    def merge_headings(self):
+        res = []
+        # fill next_reference in the headings
+        prev = self.headings[0]
+        res.append(prev)
+        for i in range(1, len(self.headings)):
+            h = self.headings[i]
+            if prev.reference == h.reference:
+                # multititle article
+                prev.merge(h)
+            else:
+                res[-1].next_reference = h.reference
+                res.append(h)
+            prev = h
+        # headings[i].next_reference = headings[i+1].reference
+        # set next_reference for last item to the pages_offset
+        res[-1].next_reference = self.header.pages_offset - self.header.articles_offset
         return res
 
-    def collect_heading_from_page(self, page_number):
-        res = []
+    def read_heading_from_page(self, page_number):
         self.bstr.seek(self.get_page_offset(page_number))
         page = CachePage(self.bstr)
         if page.is_leaf:
             prefix = ""
             for idx in range(page.headings_count):
-                heading = ArticleHeading(self.decoder, self.bstr, prefix, self.header.version)
-                prefix = heading.text
-                res.append(heading)
-        return res
+                heading = ArticleHeading()
+                prefix = heading.read(self.decoder, self.bstr, prefix)
+                self.headings.append(heading)
 
-    def decode_article(self, reference):
-        self.bstr.seek(self.header.articles_offset + reference)
+    def read_article(self, heading):
+        self.bstr.seek(self.header.articles_offset + heading.reference)
+        if self.header.version == 0x151005:
+            # xor article
+            self.xor_block_x6(self.header.articles_offset + heading.reference,
+                              self.header.articles_offset + heading.next_reference)
         size = self.bstr.read_bits(16)
         if size == 0xFFFF:
             size = self.bstr.read_bits(32)
 
         res = self.decoder.decode_article(size)
         # assert(res)
+        return res
+
+    def read_annotation(self):
+        if self.header.version == 0x151005:
+            # xor annotation
+            self.xor_block_x6(self.header.annotation_offset,
+                              self.header.dictionary_encoder_offset)
+        res = ""
+        if self.bstr.seek(self.header.annotation_offset):
+            size = self.bstr.read_bits(16)
+            res = self.decoder.decode_article(size)
         return res
 
     @property
@@ -342,25 +304,31 @@ class LsdFile:
 
         if self.verbose:
             print("decoding headings: %d" % self.header.entries_count)
-        self.headings = self.collect_headings()
-        if len(self.headings) != self.header.entries_count:
-            raise LsdError("Decoded not all entries %d != %d" % (len(self.headings), self.header.entries_count))
+        self.read_headings()
+        if self.headings.appended != self.header.entries_count:
+            raise LsdError("Decoded not all entries %d != %d" % (self.headings.appended, self.header.entries_count))
+        # merge multititle headings
+        # self.headings = self.merge_headings()
 
         if self.verbose:
-            print("decoding articles..")
+            print("decoding articles: %d" % len(self.headings))
         for h in self.headings:
-            self.dict.append((h.ext_text, self.decode_article(h.reference)))
+            # h.dump()
+            self.dict.append((h, self.read_article(h)))
         self._parsed = True
         if self.verbose:
             print("OK")
 
-    @property
-    def annotation(self):
-        res = ""
-        if self.bstr.seek(self.header.annotation_offset):
-            size = self.bstr.read_bits(16)
-            res = self.decoder.decode_article(size)
-        return res
+    def write(self, path=""):
+        """ save decoded dictionary """
+        if not self.parsed:
+            self.parse()
+        self.write_icon(path)
+        self.write_annotation(path)
+        self.write_overlay(path)
+        self.write_dsl(path)
+        if self.verbose:
+            self.write_prefix(path)
 
     def make_filename(self, path, ext):
         base, orig_ext = os.path.splitext(self.filename)
@@ -378,16 +346,17 @@ class LsdFile:
             print('Write icon:       %s' % ico_file)
 
     def write_annotation(self, path=""):
-        if self.annotation == "":
+        annotation = self.read_annotation()
+        if annotation == "":
             return
         ann_file = self.make_filename(path, "ann")
         with codecs.open(ann_file, 'w', encoding='utf-16') as ann:
-            ann.write(self.annotation)
+            ann.write(annotation)
         if self.verbose:
             print('Write annotation: %s' % ann_file)
 
     def write_prefix(self, path=""):
-        if self.annotation == "":
+        if self.decoder.prefix == "":
             return
         pref_file = self.make_filename(path, "pref")
         with codecs.open(pref_file, 'w', encoding='utf-8') as pref:
@@ -417,20 +386,34 @@ class LsdFile:
                 dsl.write(u"#ICON_FILE\t\"" + base + '.' + "bmp" + u"\"\n")
             dsl.write(u"\n")
             for h, r in self.dict:
-                dsl.write(h)
-                dsl.write(u"\n\t")
+                if h.simple:
+                    dsl.write(h.get_first_ext_text())
+                    dsl.write(u"\n\t")
+                else:
+                    for item in h.headings:
+                        dsl.write(item.ext_text)
+                        dsl.write(u"\n")
+                    dsl.write(u"\t")
                 dsl.write(self.normalize_article(r))
                 dsl.write(u"\n")
         if self.verbose:
             print('Write dsl:        %s' % dsl_file)
 
-    def write(self, path=""):
-        if not self.parsed:
-            # raise LsdError("Must parsed first!")
-            self.parse()
-        self.write_icon(path)
-        self.write_annotation(path)
-        self.write_overlay(path)
-        self.write_dsl(path)
-        if self.verbose:
-            self.write_prefix(path)
+    def dump(self):
+        self.header.dump()
+        # dump header for not supported versions
+        if self.decoder is not None:
+            print("Name:                  %s" % self.name)
+            print("First heading:         %s" % self.first_heading)
+            print("Last heading:          %s" % self.last_heading)
+            print("Capitals:              %s" % self.capitals)
+            print("Pages end:             %s" % hex(self.pages_end))
+            print("Overlay data:          %s" % hex(self.overlay_data))
+            print("Pages count:           %d" % ((self.pages_end - self.header.pages_offset) // 512))
+            if self.header.version > 0x140000:
+                print("dummy1:                %s" % hex(self.dummy1))
+                print("dummy2:                %s" % hex(self.dummy2))
+            print("Icon enable:           %s" % (self.icon_size > 0))
+            if self.readed:
+                self.decoder.dump()
+                self.overlay.dump()

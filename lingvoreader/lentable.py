@@ -92,6 +92,6 @@ class LenTable():
 
     def dump(self, name):
         print("LenTable:              %s" % name)
-        print("\tCount:             %s" % self._count)
-        print("\tbitsPerLen:        %s" % self._bits_per_len)
-        print("\tIdxBitSize:        %s" % self._idx_bit_size)
+        print("    Count:             %s" % self._count)
+        print("    bitsPerLen:        %s" % self._bits_per_len)
+        print("    IdxBitSize:        %s" % self._idx_bit_size)

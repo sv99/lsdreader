@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 __author__ = 'sv99'
 # The version as used in the setup.py
-__version__ = "0.1.6"
+__version__ = "0.2.7"
 
 
 class LsdError(Exception):

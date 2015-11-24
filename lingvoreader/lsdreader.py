@@ -25,49 +25,59 @@ __author__ = 'sv99'
 # Worked with Lingvo x5 dictionary, other version not supported
 # v 0.1 - 16.09.2013
 #
-# v 0.1.6 - 19.11.2015
-#   add support lingvo 12 and x3 dictionary format
+# v 0.2.0 - 22.11.2015
+#   add support lingvo 10, 12, x3 and x6 dictionary format
 #
 if sys.platform.startswith("win"):
     sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
 
 
-def unpack(dict_file, dest_dir, verbose):
-    dict_ext = os.path.splitext(dict_file)[1].upper()
+def unpack(dicts, dest_dir, verbose):
+    # dict_ext = os.path.splitext(dict_file)[1].upper()
+    # if dict_ext != '.LSD':
+    #     raise LsdError("Need Lingvo lsd dictionary.")
 
-    if dict_ext != '.LSD':
-        raise LsdError("Need Lingvo lsd dictionary.")
-
-    start = timer()
-    try:
-        print("Unpacking dict: %s" % dict_file)
-        m = LsdFile(dict_file, verbose)
-        m.parse()
-        m.dump()
-        m.write(dest_dir)
-    except ValueError, e:
-        print("Error: %s" % e)
-        return 1
-    end = timer()
-    print("Unpack OK (%s)" % tools.display_time(end - start))
+    count = len(dicts)
+    if count == 1:
+        print("Unpacking dict: %s" % dicts[0])
+    for i in range(count):
+        dict_file = dicts[i]
+        start = timer()
+        try:
+            if count > 1:
+                print("Unpacking dict (%d from %d): %s" % (i + 1, count, dict_file))
+            m = LsdFile(dict_file, verbose)
+            m.parse()
+            m.dump()
+            m.write(dest_dir)
+        except ValueError, e:
+            print("Error: %s" % e)
+            return 1
+        end = timer()
+        print("Unpack OK (%s)" % tools.display_time(end - start))
 
     return 0
 
 
-def header(dict_file):
-    dict_ext = os.path.splitext(dict_file)[1].upper()
+def header(dicts):
+    # dict_ext = os.path.splitext(dict_file)[1].upper()
+    # if dict_ext != '.LSD':
+    #     raise LsdError("Need Lingvo lsd dictionary.")
 
-    if dict_ext != '.LSD':
-        raise LsdError("Need Lingvo lsd dictionary.")
-
-    try:
-        print("Unpacking dict: %s" % dict_file)
-        m = LsdFile(dict_file, True)
-        m.dump()
-        # print("Header %s OK" % dict_file)
-    except ValueError, e:
-        print("Error: %s" % e)
-        return 1
+    count = len(dicts)
+    if count == 1:
+        print("Unpacking dict: %s" % dicts[0])
+    for i in range(count):
+        dict_file = dicts[i]
+        try:
+            if count > 1:
+                print("Unpacking dict (%d from %d): %s" % (i + 1, count, dict_file))
+            m = LsdFile(dict_file, True)
+            m.dump()
+            # print("Header %s OK" % dict_file)
+        except ValueError, e:
+            print("Error: %s" % e)
+            return 1
 
     return 0
 
@@ -123,24 +133,19 @@ def main():
         dicts.append(args.input)
 
     if args.header:
-        for d in dicts:
-            header(d)
-        return 0
+        header(dicts)
+    else:
+        if args.outdir != "":
+            # check path
+            if not os.path.exists(args.outdir):
+                os.mkdir(args.outdir)
 
-    if args.outdir != "":
-        # check path
-        if not os.path.exists(args.outdir):
-            os.mkdir(args.outdir)
-
-    start = timer()
-    c = 0
-    for d in dicts:
-        unpack(d, args.outdir, args.verbose)
-        c += 1
-    end = timer()
-    if c > 1:
-        print("Files count: %i" % c)
-        print("Elapsed: %s" % tools.display_time(end - start))
+        start = timer()
+        unpack(dicts, args.outdir, args.verbose)
+        end = timer()
+        if len(dicts) > 1:
+            # print("Files count: %i" % c)
+            print("Elapsed: %s" % tools.display_time(end - start))
 
     return 0
 

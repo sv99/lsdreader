@@ -9,7 +9,8 @@ __author__ = 'sv99'
 class TestBitStream(TestCase):
     def setUp(self):
         print "Creating a new BitStream..."
-        self.record = '\x00\x01\x02\x03\x04\x05\x06\x07\x08'
+        # record - bytearray, not string!
+        self.record = bytearray('\x00\x01\x02\x03\x04\x05\x06\x07\x08')
         self.bst = bitstream.BitStream(self.record)
 
     def tearDown(self):

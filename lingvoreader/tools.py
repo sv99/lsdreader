@@ -42,6 +42,7 @@ lang_map = {
     1561: u"Bashkir",
     1069: u"Basque",
     1059: u"Belarusian",
+    # 1059: u"Byelorussian",
     1562: u"Bemba",
     1093: u"Bengali",
     1563: u"Blackfoot",
@@ -101,11 +102,13 @@ lang_map = {
     6156: u"FrenchMonaco",
     33804: u"FrenchProperNames",
     4108: u"FrenchSwiss",
-    1576: u"Frisian",
+    1122: u"Frisian",
+    1576: u"Frisian_Legacy",  # x6
     1577: u"Friulian",
     1084: u"GaelicScottish",
     1578: u"Gagauz",
-    1579: u"Galician",
+    1110: u"Galician",
+    1579: u"Galician_Legacy",  # x6
     1580: u"Ganda",
     1079: u"Georgian",
     1031: u"German",
@@ -122,11 +125,14 @@ lang_map = {
     2055: u"GermanSwiss",
     1032: u"Greek",
     32776: u"GreekKathareusa",
-    1582: u"Guarani",
+    1140: u"Guarani",
+    1582: u"Guarani_Legacy",  # x6
     1095: u"Gujarati",
     1583: u"Hani",
-    1652: u"Hausa",
-    1539: u"Hawaiian",
+    1128: u"Hausa",  # x6
+    1652: u"Hausa_Legacy",
+    1141: u"Hawaiian",  # x6
+    1539: u"Hawaiian_Legacy",
     1037: u"Hebrew",
     1081: u"Hindi",
     1038: u"Hungarian",
@@ -135,6 +141,10 @@ lang_map = {
     1057: u"Indonesian",
     1585: u"Ingush",
     1586: u"Interlingua",
+    2108: u"Irish",  # x6
+    1552: u"Irish_Legacy",  # x6
+    # 2108: u"Gaelic",          # x6
+    # 1552: u"Gaelic_Legacy",   # x6
     1040: u"Italian",           # x5 tested
     33808: u"ItalianProperNames",
     2064: u"ItalianSwiss",
@@ -167,7 +177,8 @@ lang_map = {
     1603: u"KurdishCyrillic",
     1604: u"Lak",
     1108: u"Lao",
-    1540: u"Latin",
+    1142: u"Latin",  # x6
+    1540: u"Latin_Legacy",
     1062: u"Latvian",
     1655: u"LatvianGothic",
     1605: u"Lezgin",
@@ -183,7 +194,7 @@ lang_map = {
     1082: u"Maltese",
     1112: u"Manipuri",
     1609: u"Mansi",
-    1064: u"Maori",
+    1153: u"Maori",  # x6
     1102: u"Marathi",
     1610: u"Mari",
     1611: u"Maya",
@@ -209,10 +220,12 @@ lang_map = {
     32780: u"OldFrench",
     33799: u"OldGerman",
     32784: u"OldItalian",
+    1657: u"OldSlavonic",  # x6
     32778: u"OldSpanish",
     1096: u"Oriya",
     1547: u"Ossetic",
-    1624: u"Papiamento",
+    1145: u"Papiamento",  # x6
+    1624: u"Papiamento_Legacy",
     1625: u"PidginEnglish",
     1654: u"Pinyin",
     1045: u"Polish",
@@ -221,7 +234,11 @@ lang_map = {
     2070: u"PortugueseStandard",    # x5 supported
     1541: u"Provencal",
     1094: u"Punjabi",
-    1626: u"Quechua",
+    1131: u"Quechua",  # x6
+    # 1131: u"QuechuaBolivia",  # x6
+    2155: u"QuechuaEcuador",  # x6
+    3179: u"QuechuaPeru",  # x6
+    1626: u"Quechua_Legacy",
     1047: u"RhaetoRomanic",
     1048: u"Romanian",
     2072: u"RomanianMoldavia",
@@ -231,6 +248,7 @@ lang_map = {
     1049: u"Russian",
     2073: u"RussianMoldavia",
     32793: u"RussianOldSpelling",
+    34841: u"RussianOldOrtho",  # x6
     33817: u"RussianProperNames",
     1083: u"Saami",
     1542: u"Samoan",
@@ -242,7 +260,8 @@ lang_map = {
     1113: u"Sindhi",
     1051: u"Slovak",
     1060: u"Slovenian",
-    1633: u"Somali",
+    1143: u"Somali",  # x6
+    1633: u"Somali_Legacy",
     1070: u"Sorbian",                   # not supported
     1634: u"Sotho",
     # 1034: u"Spanish",                  # not supported
@@ -276,7 +295,8 @@ lang_map = {
     1637: u"Tabassaran",
     1553: u"Tagalog",
     1639: u"Tahitian",
-    1638: u"Tajik",
+    1064: u"Tajik",  # x6
+    1638: u"Tajik_Legacy",
     1097: u"Tamil",
     1092: u"Tatar",
     1098: u"Telugu",
@@ -285,9 +305,11 @@ lang_map = {
     1641: u"Tongan",
     1073: u"Tsonga",
     1074: u"Tswana",
+    # 1074, u"Chuana",
     1642: u"Tun",
     1055: u"Turkish",
-    1643: u"Turkmen",
+    1090: u"Turkmen",  # x6
+    1643: u"Turkmen_Legacy",
     1644: u"Tuvin",
     1645: u"Udmurt",
     # 1646: u"Uighur",           # not supported
@@ -303,10 +325,13 @@ lang_map = {
     1075: u"Venda",
     1066: u"Vietnamese",
     1648: u"Visayan",
-    1543: u"Welsh",
-    1649: u"Wolof",
+    1106: u"Welsh",  # x6
+    1543: u"Welsh_Legacy",
+    1160: u"Wolof",  # x6
+    1649: u"Wolof_Legacy",
     1076: u"Xhosa",
-    1650: u"Yakut",
+    1157: u"Yakut",  # x6
+    1650: u"Yakut_Legacy",
     1085: u"Yiddish",
     1651: u"Zapotec",
     1077: u"Zulu",
