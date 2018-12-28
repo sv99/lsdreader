@@ -341,7 +341,7 @@ lang_map = {
 def int2unichr(value):
     import sys
     if sys.version_info > (3, 0):
-        return str(value)
+        return chr(value)
     else:
         return unichr(value)
 
