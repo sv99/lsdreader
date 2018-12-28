@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from __future__ import (print_function)
+from builtins import chr as text
 
 __author__ = 'sv99'
 
@@ -339,11 +340,12 @@ lang_map = {
 
 
 def int2unichr(value):
-    import sys
-    if sys.version_info > (3, 0):
-        return chr(value)
-    else:
-        return unichr(value)
+    # import sys
+    # if sys.version_info > (3, 0):
+    #     return chr(value)
+    # else:
+    #     return unichr(value)
+    return text(value)
 
 
 def print_codecs():

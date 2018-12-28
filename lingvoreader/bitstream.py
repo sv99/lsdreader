@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import struct
-from lingvoreader.tools import int2unichr
 
+from lingvoreader.tools import int2unichr
 from lingvoreader import LsdError
 
 __author__ = 'sv99'
