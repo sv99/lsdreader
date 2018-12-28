@@ -28,6 +28,9 @@ __author__ = 'sv99'
 # v 0.2.0 - 22.11.2015
 #   add support lingvo 10, 12, x3 and x6 dictionary format
 #
+# v 0.2.9 - 28.12.2018
+#   add python3 support
+#
 if sys.platform.startswith("win"):
     sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
 
@@ -50,7 +53,7 @@ def unpack(dicts, dest_dir, verbose):
             m.parse()
             m.dump()
             m.write(dest_dir)
-        except ValueError, e:
+        except ValueError as e:
             print("Error: %s" % e)
             return 1
         end = timer()
@@ -75,7 +78,7 @@ def header(dicts):
             m = LsdFile(dict_file, True)
             m.dump()
             # print("Header %s OK" % dict_file)
-        except ValueError, e:
+        except ValueError as e:
             print("Error: %s" % e)
             return 1
 

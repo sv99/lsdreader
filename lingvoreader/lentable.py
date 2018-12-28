@@ -1,19 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from __future__ import (print_function)
-import tools
+from . import tools
 
 __author__ = 'sv99'
 
 
-class SymInfo():
+class SymInfo:
     def __init__(self, sym_idx, size, code):
         self.sym_idx = sym_idx
         self.size = size
         self.code = code
 
 
-class HuffmanNode():
+class HuffmanNode:
     def __init__(self, left, right, parent, weight):
         self.left = left
         self.right = right
@@ -21,7 +21,7 @@ class HuffmanNode():
         self.weight = weight
 
 
-class LenTable():
+class LenTable:
     def __init__(self, bstr):
         self.bstr = bstr
         self._count = self.bstr.read_bits(32)

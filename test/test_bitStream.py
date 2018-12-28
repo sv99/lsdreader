@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from __future__ import print_function
 from unittest import TestCase
 from lingvoreader import bitstream
 
@@ -8,13 +9,13 @@ __author__ = 'sv99'
 
 class TestBitStream(TestCase):
     def setUp(self):
-        print "Creating a new BitStream..."
+        print("Creating a new BitStream...")
         # record - bytearray, not string!
         self.record = bytearray('\x00\x01\x02\x03\x04\x05\x06\x07\x08')
         self.bst = bitstream.BitStream(self.record)
 
     def tearDown(self):
-        print "Destroying the BitStream..."
+        print("Destroying the BitStream...")
         self.bst = None
 
     def test_reverse32(self):

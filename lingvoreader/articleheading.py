@@ -1,7 +1,9 @@
 # coding: utf-8
 from __future__ import unicode_literals, print_function, division, absolute_import
+from lingvoreader.tools import int2unichr
 
 __author__ = 'svolkov'
+
 
 # info from ArticleHeading.cpp
 # Not implemented yet!!
@@ -134,7 +136,7 @@ class ArticleHeading:
                 first_idx = prev_idx = 0
                 for i in range(ext_length):
                     idx = bstr.read_bits(8)
-                    char = unichr(bstr.read_bits(16))
+                    char = int2unichr(bstr.read_bits(16))
                     if ext == "":
                         ext += char
                         first_idx = prev_idx = idx

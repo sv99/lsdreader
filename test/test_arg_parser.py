@@ -3,7 +3,7 @@
 from unittest import TestCase
 from lingvoreader import lsdreader
 import sys
-from StringIO import StringIO
+from io import BytesIO
 
 __author__ = 'sv99'
 
@@ -18,7 +18,7 @@ class ArgumentParserError(Exception):
         self.error_code = error_code
 
 
-class StdIOBuffer(StringIO):
+class StdIOBuffer(BytesIO):
     pass
 
 

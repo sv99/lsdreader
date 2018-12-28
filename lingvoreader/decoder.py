@@ -3,6 +3,7 @@
 from __future__ import (division, absolute_import, print_function)
 from lingvoreader import tools
 from lingvoreader.lentable import LenTable
+from lingvoreader.tools import int2unichr
 
 __author__ = 'sv99'
 
@@ -54,7 +55,7 @@ class Decoder:
             sym_idx = self._ltHeadings.decode()
             sym = self._heading_symbols[sym_idx]
             assert(sym <= 0xffff)  # LingvoEngine:2EAB84E8
-            res += unichr(sym)
+            res += int2unichr(sym)
         return res
 
     def decode_article(self, size):
@@ -75,7 +76,7 @@ class Decoder:
                     s = sym - 0xfffd
                     res += self.prefix[prefix_idx:prefix_idx + s]
             else:
-                res += unichr(sym)
+                res += int2unichr(sym)
         return res
 
     # need seek(bstr.header.dictionary_encoder_offset) befor call!
@@ -149,7 +150,7 @@ class SystemDictionaryDecoder13(Decoder):
                     s = sym - 0x3d
                     res += res[start_idx:start_idx + s]
             else:
-                res += unichr(sym - 0x80)
+                res += int2unichr(sym - 0x80)
         return res
 
 
@@ -225,8 +226,9 @@ class AbbreviationDictionaryDecoder(Decoder):
     def read_xored_prefix(self, size):
         res = ""
         for i in range(size):
-            res += unichr(self.bstr.read_bits(16) ^ 0x879A)
+            res += int2unichr(self.bstr.read_bits(16) ^ 0x879A)
         return res
+
 
 class SystemDictionaryDecoder15(Decoder):
     def __init__(self, bstr):
@@ -268,5 +270,5 @@ class SystemDictionaryDecoder15(Decoder):
                     s = sym - 0x3d
                     res += res[start_idx:start_idx + s]
             else:
-                res += unichr(sym - 0x80)
+                res += int2unichr(sym - 0x80)
         return res

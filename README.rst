@@ -17,6 +17,7 @@ Install
 
 Install from pip::
 
+    pip install setuptools -U
     pip install lingvoreader
 
 Install development version::
@@ -26,7 +27,9 @@ Install development version::
     
 make tar.gz for PyPi::
     
+    pip install twine
     python setup.py sdist
+    twine upload dist/lingvoreader-x.x.x.tar.gz
 
 Usage
 -----
@@ -38,7 +41,7 @@ Usage
     
     optional arguments:
       -h, --help            show this help message and exit
-      --header               show header info and exit
+      --header              show header info and exit
       -i INPUT, --input INPUT
                             Dictionary to decode
       -a, --all             All dictionary in current directory

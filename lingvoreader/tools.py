@@ -338,6 +338,14 @@ lang_map = {
 }
 
 
+def int2unichr(value):
+    import sys
+    if sys.version_info > (3, 0):
+        return str(value)
+    else:
+        return unichr(value)
+
+
 def print_codecs():
     # sort by values
     for lcid in sorted(lang_map, key=lang_map.get):

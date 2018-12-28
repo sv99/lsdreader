@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import struct
+from lingvoreader.tools import int2unichr
 
 from lingvoreader import LsdError
 
@@ -16,11 +17,13 @@ def reverse16(word_value):
     res, = struct.unpack('>H', struct.pack('<H', word_value))
     return res
 
+
 def rec2word(rec, big_endian=True):
     if big_endian:
         return (ord(rec[0]) << 8) + ord(rec[1])
     else:
         return (ord(rec[1]) << 8) + ord(rec[0])
+
 
 def rec2int(rec, big_endian=True):
     if big_endian:
@@ -182,7 +185,7 @@ class BitStream:
             ch = self.read_some(2)
             if not big_endian:
                 ch = reverse16(ch)
-            res += unichr(ch)
+            res += int2unichr(ch)
             # res += unichr(self.read_some(2), big_endian))
         return res
 

@@ -6,3 +6,5 @@ lingvoreader.egg-info/
 *.swp
 *.pyc
 .DS_Store
+venv/
+venv2/

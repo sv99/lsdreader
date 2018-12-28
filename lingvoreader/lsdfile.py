@@ -340,7 +340,7 @@ class LsdFile:
         if self.icon_size == 0:
             return
         ico_file = self.make_filename(path, "bmp")
-        with open(ico_file, 'w') as ico:
+        with open(ico_file, 'wb') as ico:
             ico.write(self.icon)
         if self.verbose:
             print('Write icon:       %s' % ico_file)
