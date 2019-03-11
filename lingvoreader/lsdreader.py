@@ -31,7 +31,7 @@ __author__ = 'sv99'
 # v 0.2.9 - 28.12.2018
 #   add python3 support
 #
-if sys.platform.startswith("win"):
+if sys.platform.startswith("win") and (sys.version_info < (3, 0)):
     sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
 
 
