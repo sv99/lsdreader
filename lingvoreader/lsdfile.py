@@ -350,7 +350,7 @@ class LsdFile:
         if annotation == "":
             return
         ann_file = self.make_filename(path, "ann")
-        with codecs.open(ann_file, 'w', encoding='utf-16') as ann:
+        with codecs.open(ann_file, 'w', encoding='utf-16', errors='surrogatepass') as ann:
             ann.write(annotation)
         if self.verbose:
             print('Write annotation: %s' % ann_file)
@@ -377,7 +377,7 @@ class LsdFile:
             print("Nothing writing to dsl!")
             return
         dsl_file = self.make_filename(path, "dsl")
-        with codecs.open(dsl_file, 'w', encoding='utf-16') as dsl:
+        with codecs.open(dsl_file, 'w', encoding='utf-16', errors='surrogatepass') as dsl:
             dsl.write(u"#NAME\t\"" + self.name + u"\"\n")
             dsl.write(u"#INDEX_LANGUAGE\t\"" + tools.lang_map[self.header.source_language] + u"\"\n")
             dsl.write(u"#CONTENTS_LANGUAGE\t\"" + tools.lang_map[self.header.target_language] + u"\"\n")
