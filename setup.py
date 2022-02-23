@@ -31,8 +31,14 @@ setup(
     author='sv99',
     author_email='sv99@inbox.ru',
     url='https://github.com/sv99/lsdreader',
-    description='Linvo 11, 12, X3, X5 and X6 lsd reader Utilities\n compatible with python2.7 and python3',
+    description='Linvo 11, 12, X3, X5 and X6 lsd reader utilities',
     long_description=read('README.rst'),
+    classifiers=[
+        'Development Status :: 4 - Beta',
+        'Topic :: Education',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+    ],
     packages=find_packages(),
     platforms='any',
     install_requires=[
